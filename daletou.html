@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大乐透号码生成器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .count-selector {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .count-selector label {
+            display: block;
+            margin-bottom: 8px;
+            color: #34495e;
+            font-weight: bold;
+        }
+        
+        input[type="number"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .generate-btn {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            flex: 2;
+        }
+        
+        .reset-btn {
+            background: #ecf0f1;
+            color: #2c3e50;
+            flex: 1;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .results {
+            margin-top: 30px;
+        }
+        
+        .lottery-group {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid #3498db;
+        }
+        
+        .group-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .group-title {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+        
+        .group-index {
+            background: #3498db;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .numbers {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .front-numbers, .back-numbers {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .number {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .front-numbers .number {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            color: white;
+        }
+        
+        .back-numbers .number {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+        }
+        
+        .label {
+            font-weight: bold;
+            color: #7f8c8d;
+            margin-right: 5px;
+        }
+        
+        .separator {
+            color: #95a5a6;
+            font-size: 1.5rem;
+            margin: 0 10px;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 30px;
+            color: #856404;
+        }
+        
+        .warning h3 {
+            margin-bottom: 10px;
+            color: #856404;
+        }
+        
+        .warning ul {
+            padding-left: 20px;
+        }
+        
+        .warning li {
+            margin-bottom: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .number {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎰 大乐透号码生成器</h1>
+            <div class="subtitle">随机生成大乐透投注号码，仅供娱乐参考</div>
+        </div>
+        
+        <div class="controls">
+            <div class="count-selector">
+                <label for="count">生成组数：</label>
+                <input type="number" id="count" min="1" max="20" value="5">
+            </div>
+            <div class="buttons">
+                <button class="generate-btn" onclick="generateNumbers()">🎲 生成号码</button>
+                <button class="reset-btn" onclick="resetNumbers()">🔄 重置</button>
+            </div>
+        </div>
+        
+        <div class="results" id="results">
+            <!-- 号码将在这里显示 -->
+        </div>
+        
+        <div class="warning">
+            <h3>⚠️ 重要提示</h3>
+            <ul>
+                <li>所有号码均为随机生成，无任何预测功能</li>
+                <li>每组号码的中奖概率完全相同</li>
+                <li>请理性投注，量力而行</li>
+                <li>建议设置购彩预算，切勿沉迷</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        class LotteryGeneratorJS {
+            constructor() {
+                this.frontRange = 35;
+                this.frontCount = 5;
+                this.backRange = 12;
+                this.backCount = 2;
+            }
+
+            generateRandomNumbers(max, count) {
+                const numbers = new Set();
+                while (numbers.size < count) {
+                    const randomNum = Math.floor(Math.random() * max) + 1;
+                    numbers.add(randomNum);
+                }
+                return Array.from(numbers).sort((a, b) => a - b);
+            }
+
+            generateSingle() {
+                return {
+                    front: this.generateRandomNumbers(this.frontRange, this.frontCount),
+                    back: this.generateRandomNumbers(this.backRange, this.backCount)
+                };
+            }
+
+            generateMultiple(count) {
+                const results = [];
+                for (let i = 0; i < count; i++) {
+                    results.push(this.generateSingle());
+                }
+                return results;
+            }
+
+            formatNumber(num) {
+                return num.toString().padStart(2, '0');
+            }
+        }
+
+        const generator = new LotteryGeneratorJS();
+
+        function generateNumbers() {
+            const count = parseInt(document.getElementById('count').value) || 5;
+            const resultsDiv = document.getElementById('results');
+            
+            // 限制最大组数
+            if (count > 20) {
+                alert('最多只能生成20组号码！');
+                return;
+            }
+            
+            const groups = generator.generateMultiple(count);
+            
+            let html = '';
+            groups.forEach((group, index) => {
+                const frontNumbers = group.front.map(num => 
+                    `<div class="number">${generator.formatNumber(num)}</div>`
+                ).join('');
+                
+                const backNumbers = group.back.map(num => 
+                    `<div class="number">${generator.formatNumber(num)}</div>`
+                ).join('');
+                
+                html += `
+                    <div class="lottery-group">
+                        <div class="group-header">
+                            <div class="group-title">大乐透号码</div>
+                            <div class="group-index">第 ${index + 1} 组</div>
+                        </div>
+                        <div class="numbers">
+                            <span class="label">前区：</span>
+                            <div class="front-numbers">${frontNumbers}</div>
+                            <span class="separator">|</span>
+                            <span class="label">后区：</span>
+                            <div class="back-numbers">${backNumbers}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            resultsDiv.innerHTML = html;
+            
+            // 添加动画效果
+            const numberElements = document.querySelectorAll('.number');
+            numberElements.forEach((element, index) => {
+                element.style.animation = `none`;
+                setTimeout(() => {
+                    element.style.animation = `bounce 0.5s ease ${index * 0.1}s`;
+                }, 10);
+            });
+        }
+
+        function resetNumbers() {
+            document.getElementById('results').innerHTML = '';
+            document.getElementById('count').value = 5;
+        }
+
+        // 添加CSS动画
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes bounce {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-10px); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // 页面加载时自动生成一次
+        window.onload = generateNumbers;
+    </script>
+</body>
+</html>
